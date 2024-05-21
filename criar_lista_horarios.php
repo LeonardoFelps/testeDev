@@ -1,28 +1,31 @@
 <?php
-// Verificar se a variável $_POST['data'] está definida
-if (isset($_POST['data'])) {
-    $data = $_POST['data'];
-
-    // Aqui você pode usar a data para gerar a lista de horários de trabalho para os próximos 30 dias
-    // Por exemplo, você pode usar um loop para gerar os horários de trabalho para cada dia
-    echo '<div class="work-schedule">';
-    for ($i = 0; $i < 30; $i++) {
-        echo "<div class='work-day'>";
-        echo "<span class='date'>" . date("Y-m-d", strtotime("$data +$i days")) . "</span>";
-        echo "<ul class='hours'>";
-        // Adiciona apenas as horas úteis de trabalho
-        for ($hora = 9; $hora < 18; $hora++) {
-            // Exclui a hora do almoço (12h às 13h)
-            if ($hora != 12) {
-                echo "<li class='hour'>" . date("H:i", strtotime("$data +$i days $hora:00")) . "</li>";
+function gerarHorariosUteis($dataInicio, $dias) {
+    $horarios = [];
+    $dataAtual = new DateTime($dataInicio);
+    for ($i = 0; $i < $dias; $i++) {
+        if ($dataAtual->format('N') < 6) { // 1 (segunda-feira) até 5 (sexta-feira)
+            $horarioDia = [];
+            for ($hora = 9; $hora < 18; $hora++) {
+                $horarioDia[] = $hora . ":00 - " . ($hora + 1) . ":00";
             }
+            $horarios[] = ['data' => $dataAtual->format('Y-m-d'), 'horarios' => $horarioDia];
         }
-        echo "</ul>";
-        echo "</div>";
+        $dataAtual->modify('+1 day');
     }
-    echo '</div>';
-} else {
-    // Se $_POST['data'] não estiver definida, exiba uma mensagem de erro ou faça outra coisa
-    echo "<p>Por favor, selecione uma data.</p>";
+    return $horarios;
 }
+
+$horarios = gerarHorariosUteis(date('Y-m-d'), 30);
 ?>
+<div class="work-schedule">
+    <?php foreach ($horarios as $indice => $dia): ?>
+        <div class="work-day" onclick="expandirHorarios(<?php echo $indice; ?>)">
+            <span class="date"><?php echo $dia['data']; ?></span>
+            <ul class="hours" style="display: none;">
+                <?php foreach ($dia['horarios'] as $hora): ?>
+                    <li class="hour"><?php echo $hora; ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endforeach; ?>
+</div>

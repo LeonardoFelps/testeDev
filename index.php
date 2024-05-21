@@ -28,7 +28,6 @@ if (isset($_POST['nomeDepartamento'])) {
     ];
 }
 
-var_dump($_SESSION);
 ?>
 
 <!DOCTYPE html>
@@ -37,6 +36,7 @@ var_dump($_SESSION);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://kit.fontawesome.com/ab17567ab1.js" crossorigin="anonymous"></script>
     <title>Gerenciamento</title>
 </head>
 <body>
@@ -46,46 +46,51 @@ var_dump($_SESSION);
         <button onclick="openModal('jornadaModal')">Jornada de trabalho</button>
     </header>
 
-    <!-- Modal Funcionários -->
-    <div id="funcionariosModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('funcionariosModal')">&times;</span>
-            <h2>Funcionários</h2>
+<!-- Modal Funcionários -->
+<div id="funcionariosModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('funcionariosModal')">&times;</span>
+        <h2>Funcionários</h2>
 
-            <!-- Formulário de Cadastro de Funcionários -->
-            <form id="cadastroFuncionarioForm" method="post">
-                <label for="nome">Nome:</label>
-                <input type="text" id="nome" name="nome" required><br>
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required><br>
-                <label for="cpf">CPF:</label>
-                <input type="text" id="cpf" name="cpf" required><br>
-                <label for="idade">Idade:</label>
-                <input type="number" id="idade" name="idade" required><br>
-                <label for="departamento">Departamento:</label>
-                <select id="departamento" name="departamento" required>
-                    <?php foreach ($_SESSION['departamentos'] as $departamento): ?>
-                        <option value="<?php echo $departamento['nome']; ?>"><?php echo $departamento['nome']; ?></option>
-                    <?php endforeach; ?>
-                </select><br>
+        <!-- Formulário de Cadastro de Funcionários -->
+        <form id="cadastroFuncionarioForm" method="post">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required><br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br>
+            <label for="cpf">CPF:</label>
+            <input type="text" id="cpf" name="cpf" required><br>
+            <label for="idade">Idade:</label>
+            <input type="number" id="idade" name="idade" required><br>
+            <label for="departamento">Departamento:</label>
+            <select id="departamento" name="departamento" required>
+                <?php foreach ($_SESSION['departamentos'] as $departamento): ?>
+                    <option value="<?php echo $departamento['nome']; ?>"><?php echo $departamento['nome']; ?></option>
+                <?php endforeach; ?>
+            </select><br>
+            <button type="button" onclick="cadastrarFuncionario()">Cadastrar</button>
+        </form>
 
-                <button type="button" onclick="cadastrarFuncionario()">Cadastrar</button>
-            </form>
-
-            <!-- Lista de Funcionários -->
-            <h3>Lista de Funcionários</h3>
-            <ul>
+        <!-- Lista de Funcionários -->
+        <h3>Lista de Funcionários</h3>
+        <ul class="employee-list">
             <?php foreach ($_SESSION['funcionarios'] as $index => $funcionario): ?>
-                <li style="display: flex; align-items: center; justify-content: space-between;">
-                    <span style="flex-grow: 1;"><?php echo htmlspecialchars($funcionario['nome']); ?></span>
-                    <div>
-                        <button onclick="viewFuncionario(<?php echo $index; ?>)">👁️</button>
-                        <button onclick="excluirFuncionario(<?php echo $index; ?>)">❌</button>
+                <li class="employee-item">
+                    <span class="employee-name"><?php echo htmlspecialchars($funcionario['nome']); ?></span>
+                    <div class="employee-actions">
+                        <button onclick="viewFuncionario(<?php echo $index; ?>)" class="view-button">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                        <button onclick="excluirFuncionario(<?php echo $index; ?>)" class="delete-button">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                     </div>
                 </li>
             <?php endforeach; ?>
+        </ul>
+    </div>
+</div>
 
-            </ul>
         </div>
     </div>
 
@@ -99,29 +104,30 @@ var_dump($_SESSION);
     </div>
 
     <!-- Modal Departamentos -->
-    <div id="departamentosModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('departamentosModal')">&times;</span>
-            <h2>Departamentos</h2>
-            <!-- Formulário para adicionar novo departamento -->
-            <form id="cadastroDepartamentoForm">
-                <label for="nomeDepartamento">Nome do Departamento:</label>
-                <input type="text" id="nomeDepartamento" name="nomeDepartamento" required>
-                <button type="button" onclick="cadastrarDepartamento()">Adicionar Departamento</button>
-            </form>
-            <!-- Lista de Departamentos -->
-            <h3>Lista de Departamentos</h3>
-            <ul id="listaDepartamentos">
-                <?php foreach ($_SESSION['departamentos'] as $indice => $departamento): ?>
-                    <li>
-                        <?php echo $departamento['nome']; ?>
-                        <button onclick="excluirDepartamento(<?php echo $indice; ?>)">Excluir</button>
-                    </li>
-                <?php endforeach; ?>                
-            </ul>
-
-        </div>
+<div id="departamentosModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('departamentosModal')">&times;</span>
+        <h2>Departamentos</h2>
+        <!-- Formulário para adicionar novo departamento -->
+        <form id="cadastroDepartamentoForm">
+            <label for="nomeDepartamento">Nome do Departamento:</label>
+            <input type="text" id="nomeDepartamento" name="nomeDepartamento" required>
+            <button type="button" onclick="cadastrarDepartamento()">Adicionar Departamento</button>
+        </form>
+        <!-- Lista de Departamentos -->
+        <h3>Lista de Departamentos</h3>
+        <ul class="department-list">
+            <?php foreach ($_SESSION['departamentos'] as $indice => $departamento): ?>
+                <li class="department-item">
+                    <span class="department-name"><?php echo $departamento['nome']; ?></span>
+                    <button class="delete-button" onclick="excluirDepartamento(<?php echo $indice; ?>)">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </li>
+            <?php endforeach; ?>                
+        </ul>
     </div>
+</div>
 
 
     <!-- Modal Jornada de Trabalho -->
@@ -129,12 +135,6 @@ var_dump($_SESSION);
         <div class="modal-content">
             <span class="close" onclick="closeModal('jornadaModal')">&times;</span>
             <h2>Jornada de Trabalho</h2>
-            <form id="verificarHorarioForm">
-                <label for="data">Data:</label>
-                <input type="date" id="data" name="data" required>
-                <button type="button" onclick="verificarHorarioUtil()">Verificar Horário</button>
-            </form>
-            <div id="resultadoVerificacao"></div> <!-- Aqui será exibido o resultado da verificação -->
             <div id="listaHorariosTrabalho">
                 <!-- Aqui será incluída a lista de horários gerada pelo PHP -->
                 <?php include 'criar_lista_horarios.php'; ?>
@@ -313,10 +313,14 @@ function verificarHorarioUtil() {
     xhr.send(formData);
 }
 
-
-
-
-
+    function expandirHorarios(indice) {
+        var ul = document.querySelectorAll('.work-day .hours')[indice];
+        if (ul.style.display === 'none') {
+            ul.style.display = 'block';
+        } else {
+            ul.style.display = 'none';
+        }
+    }
     </script>
 </body>
 </html>
