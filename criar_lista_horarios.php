@@ -1,9 +1,10 @@
 <?php
-function gerarHorariosUteis($dataInicio, $dias) {
+function gerarHorarios($dataInicio, $dias) {
     $horarios = [];
     $dataAtual = new DateTime($dataInicio);
     for ($i = 0; $i < $dias; $i++) {
-        if ($dataAtual->format('N') < 6) { // 1 (segunda-feira) até 5 (sexta-feira)
+        // Adicionando todos os dias da semana (1 a 7, onde 1 é segunda-feira e 7 é domingo)
+        if ($dataAtual->format('N') <= 7) { // 1 (segunda-feira) até 7 (domingo)
             $horarioDia = [];
             for ($hora = 9; $hora < 18; $hora++) {
                 $horarioDia[] = $hora . ":00 - " . ($hora + 1) . ":00";
@@ -15,7 +16,7 @@ function gerarHorariosUteis($dataInicio, $dias) {
     return $horarios;
 }
 
-$horarios = gerarHorariosUteis(date('Y-m-d'), 30);
+$horarios = gerarHorarios(date('Y-m-d'), 30);
 ?>
 <div class="work-schedule">
     <?php foreach ($horarios as $indice => $dia): ?>
